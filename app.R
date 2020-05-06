@@ -9,33 +9,46 @@ Setup <- function(){
   library(plyr)
   library(dplyr)
   library(tibble)
+  library(zoo)
+  library(ggplot2)
   
   # set working directory
-  setwd("c:/Users/alexa/Documents/Coding/R-code/sentiment-analysis")
+  setwd("~/elon-tweet-analysis")
   
   # read in the csv file
   elonTweets <- read.csv(file = "data/data_elonmusk.csv")
   
-  # make an object to hold the sentiments 
+  # get input values
+  print("Tweets will be analyzed for a random 60 day period")
+  
+  return(elonTweets)
+}
+
+Run <- function(elonTweets){
   sentiments <- tibble()
-}
-
-Run <- function(){
+  
+  options <- c(seq(1:nrow(elonTweets)))
+  start <- sample(options, 1, FALSE)
+  
   # loop through the csv
-  for(i in 1:(nrow(elonTweets))){
-    sentiments <- rbind(sentiments, GetSentiment(i))
+  for(i in start:(start+60)){
+    dateFull <- as.character(elonTweets[i, 3])
+    dateComponents <- strsplit(dateFull, " ")
+    date <- as.Date(dateComponents[[1]][1])
+    vector <- c(GetSentiment(elonTweets[i, 2]), date)
+    print(vector)
+    sentiments <- rbind(vector, sentiments)
   }
+  names(sentiments)[1] <- "Sentiment"
+  names(sentiments)[2] <- "Date"
+  
+  return(sentiments)
 }
 
-GetSentiment <- function(x){
+GetSentiment <- function(tweet){
   
   # load tweet
-  tweet <- as.character(elonTweets[x, 2])
-  print(tweet)
-  
-  # load date
-  year <- as.character(elonTweets[x, 3])
-  year <- as.numeric(strsplit(year, "-")[[1]][1])
+  tweet <- as.character(tweet)
   
   # remove "$"
   tweet <- gsub("\\$", "", tweet)
@@ -49,7 +62,7 @@ GetSentiment <- function(x){
   
   if(empty(sentiment)){
     print("empty")
-    return(c(0, year))
+    return(0)
   }
   
   sentiment <- count(sentiment, "sentiment") 
@@ -57,28 +70,36 @@ GetSentiment <- function(x){
   # check for no neg
   if(!(grepl("negative", sentiment$sentiment)))
   {
-    return(c(sentiment[which(sentiment == "positive"), "freq"], year))
+    return(sentiment[which(sentiment == "positive"), "freq"])
   }
   
   # check for no pos
   if(!(grepl("positive", sentiment$sentiment)))
   {
-    return(c(-sentiment[which(sentiment == "negative"), "freq"], year))
+    return(-sentiment[which(sentiment == "negative"), "freq"])
   }
   
   which(sentiment == "negative")
   
   r <- sentiment[which(sentiment == "positive"), "freq"] - sentiment[which(sentiment == "negative"), "freq"]
   
-  return(c(r, year))
+  return(r)
 }
 
-Visualize <- function(){
-  plot(sentiments$X2017, sentiments$X2)
+Visualize <- function(sentiments){
+  par("mar")
+  par(mar=c(1,1,1,1))
+  ggplot(sentiments, aes(x = as.Date(Date, origin = "1970-1-1"), y = Sentiment)) +
+    geom_smooth(method = "auto") +
+    scale_x_date(date_breaks = "15 day", 
+                 date_labels = "%d-%b-%Y") +
+    labs(title= "Elon Musk's Tweet Sentiments",
+         y="Sentiment Value", x = "Date")
 }
 
-Setup()
-Run()
-Visualize()
+Setup() %>%
+  Run() %>%
+  Visualize()
+
 
 
