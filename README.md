@@ -11,6 +11,7 @@ Notes:
 - Could modify this program to do sentiment analysis on any sorts of texts that change over time
 - Sentiment analysis is based off of number of "positive" and "negative" words
 	- In the future, would like to expand this to give an emotion back - such as "sad", "excited", etc.
+- If you're having troubles running the program, try just calling Setup() instead of the pipelined functions at the bottom, then once Setup() runs once, recall the pipeline
 
 Credits:
 - Data set taken from: https://www.kaggle.com/antonaks/analysis-of-elon-musk-s-tweets/data
