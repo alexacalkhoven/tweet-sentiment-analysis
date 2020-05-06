@@ -3,6 +3,8 @@
 To run: 
 - Change the working directory on line 16 to wherever you downloaded the "elon-tweet-analysis" folder to
 - Run all by hitting ctrl-alt-R
+- A random 60 day period will be selected to plot the sentiment values over	
+	- The range can be reduced or expanded easily by modifying the range variable on line 28
 
 Notes:
 - Could modify this program to do sentiment analysis on any sorts of texts that change over time

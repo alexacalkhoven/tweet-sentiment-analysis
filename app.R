@@ -25,13 +25,14 @@ Setup <- function(){
 }
 
 Run <- function(elonTweets){
+  range <- 60
   sentiments <- tibble()
   
-  options <- c(seq(1:nrow(elonTweets)))
+  options <- c(seq(1:(nrow(elonTweets)-range)))
   start <- sample(options, 1, FALSE)
   
   # loop through the csv
-  for(i in start:(start+60)){
+  for(i in start:(start+range)){
     dateFull <- as.character(elonTweets[i, 3])
     dateComponents <- strsplit(dateFull, " ")
     date <- as.Date(dateComponents[[1]][1])
@@ -91,7 +92,7 @@ Visualize <- function(sentiments){
   par(mar=c(1,1,1,1))
   ggplot(sentiments, aes(x = as.Date(Date, origin = "1970-1-1"), y = Sentiment)) +
     geom_smooth(method = "auto") +
-    scale_x_date(date_breaks = "15 day", 
+    scale_x_date(date_breaks = "20 day", 
                  date_labels = "%d-%b-%Y") +
     labs(title= "Elon Musk's Tweet Sentiments",
          y="Sentiment Value", x = "Date")
