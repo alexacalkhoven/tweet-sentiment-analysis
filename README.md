@@ -7,6 +7,7 @@ To run:
 	- The range can be reduced or expanded easily by modifying the range variable on line 28
 
 Notes:
+- Currently this program analyzes tweets from Elon Musk
 - Could modify this program to do sentiment analysis on any sorts of texts that change over time
 - Sentiment analysis is based off of number of "positive" and "negative" words
 	- In the future, would like to expand this to give an emotion back - such as "sad", "excited", etc.
